@@ -261,3 +261,30 @@ nextjs-portal,
   opacity: 0 !important;
   pointer-events: none !important;
 }
+/* Mobile Performance Optimizations */
+@layer utilities {
+  .performance-gpu {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    will-change: transform, opacity;
+  }
+}
+
+/* Reduced blur on mobile to prevent lag */
+.mobile-blur {
+  backdrop-filter: blur(8px);
+}
+
+@media (min-width: 768px) {
+  .mobile-blur {
+    backdrop-filter: blur(24px);
+  }
+}
+
+/* Optimize fireflies for mobile */
+@media (max-width: 768px) {
+  .animate-firefly, .animate-firefly-delayed, .animate-firefly-fast {
+    animation-duration: 25s; /* Slower animations are less taxing */
+  }
+}

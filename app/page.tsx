@@ -64,11 +64,11 @@ export default function LandingPage() {
         <div className="absolute bottom-[20%] right-[-10%] w-[40vw] h-[40vw] bg-white/5 rounded-full blur-[100px]" />
         
         {/* Fireflies */}
-        <div className="absolute w-1 h-1 bg-white rounded-full top-[20%] left-[30%] blur-[1px] animate-firefly opacity-40"></div>
-        <div className="absolute w-1.5 h-1.5 bg-white rounded-full top-[45%] left-[60%] blur-[1px] animate-firefly-delayed animate-twinkle opacity-40"></div>
-        <div className="absolute w-0.5 h-0.5 bg-white rounded-full top-[70%] left-[15%] animate-firefly-fast opacity-40"></div>
-        <div className="absolute w-1 h-1 bg-white rounded-full top-[10%] left-[80%] blur-[1px] animate-firefly opacity-40"></div>
-        <div className="absolute w-1.5 h-1.5 bg-white rounded-full top-[30%] left-[90%] blur-[1px] animate-firefly animate-twinkle opacity-40"></div>
+        <div className="absolute w-1 h-1 bg-white rounded-full top-[20%] left-[30%] blur-[1px] animate-firefly opacity-40 performance-gpu"></div>
+        <div className="absolute w-1.5 h-1.5 bg-white rounded-full top-[45%] left-[60%] blur-[1px] animate-firefly-delayed animate-twinkle opacity-40 performance-gpu"></div>
+        <div className="absolute w-0.5 h-0.5 bg-white rounded-full top-[70%] left-[15%] animate-firefly-fast opacity-40 performance-gpu"></div>
+        <div className="absolute w-1 h-1 bg-white rounded-full top-[10%] left-[80%] blur-[1px] animate-firefly opacity-40 performance-gpu"></div>
+        <div className="absolute w-1.5 h-1.5 bg-white rounded-full top-[30%] left-[90%] blur-[1px] animate-firefly animate-twinkle opacity-40 performance-gpu"></div>
       </div>
     </div>
   )

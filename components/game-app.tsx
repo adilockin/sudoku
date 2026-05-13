@@ -190,13 +190,13 @@ function GameContent() {
 
       {/* Snow particles overlay to match screenshot */}
       <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
-        <div className="absolute w-1 h-1 bg-white rounded-full top-[20%] left-[30%] blur-[1px] animate-firefly"></div>
-        <div className="absolute w-1.5 h-1.5 bg-white rounded-full top-[45%] left-[60%] blur-[1px] animate-firefly-delayed animate-twinkle"></div>
-        <div className="absolute w-0.5 h-0.5 bg-white rounded-full top-[70%] left-[15%] animate-firefly-fast"></div>
-        <div className="absolute w-1 h-1 bg-white rounded-full top-[10%] left-[80%] blur-[1px] animate-firefly"></div>
-        <div className="absolute w-2 h-2 bg-white rounded-full top-[80%] left-[75%] blur-[2px] animate-firefly-delayed animate-twinkle"></div>
-        <div className="absolute w-1 h-1 bg-white rounded-full top-[50%] left-[10%] blur-[1px] animate-firefly-fast"></div>
-        <div className="absolute w-1.5 h-1.5 bg-white rounded-full top-[30%] left-[90%] blur-[1px] animate-firefly animate-twinkle"></div>
+        <div className="absolute w-1 h-1 bg-white rounded-full top-[20%] left-[30%] blur-[1px] animate-firefly performance-gpu"></div>
+        <div className="absolute w-1.5 h-1.5 bg-white rounded-full top-[45%] left-[60%] blur-[1px] animate-firefly-delayed animate-twinkle performance-gpu"></div>
+        <div className="absolute w-0.5 h-0.5 bg-white rounded-full top-[70%] left-[15%] animate-firefly-fast performance-gpu"></div>
+        <div className="absolute w-1 h-1 bg-white rounded-full top-[10%] left-[80%] blur-[1px] animate-firefly performance-gpu"></div>
+        <div className="absolute w-2 h-2 bg-white rounded-full top-[80%] left-[75%] blur-[2px] animate-firefly-delayed animate-twinkle performance-gpu"></div>
+        <div className="absolute w-1 h-1 bg-white rounded-full top-[50%] left-[10%] blur-[1px] animate-firefly-fast performance-gpu"></div>
+        <div className="absolute w-1.5 h-1.5 bg-white rounded-full top-[30%] left-[90%] blur-[1px] animate-firefly animate-twinkle performance-gpu"></div>
       </div>
     </div>
   )

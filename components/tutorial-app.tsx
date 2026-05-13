@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 import { useSettings } from "@/lib/settings-context"
+import { useSound } from "@/lib/sound-context"
 
 interface Step {
   title: string
@@ -97,8 +98,13 @@ export default function TutorialApp() {
 
   const steps = settings.language === "ru" ? TUTORIAL_STEPS_RU : TUTORIAL_STEPS_EN
 
-  // Tutorial Music
+  const { stopMusic, startMusic } = useSound()
+
+  // Tutorial Music & Game Music Management
   useEffect(() => {
+    // Stop game music when tutorial opens
+    stopMusic()
+
     const audio = new Audio("/sounds/tutorial.mp3")
     audio.loop = true
     audio.volume = 0
@@ -129,6 +135,7 @@ export default function TutorialApp() {
     playAudio()
 
     return () => {
+      // Fade out tutorial music
       let vol = audio.volume
       const interval = setInterval(() => {
         vol -= 0.05
@@ -136,12 +143,14 @@ export default function TutorialApp() {
           audio.volume = 0
           audio.pause()
           clearInterval(interval)
+          // Restart game music when tutorial is fully closed
+          startMusic()
         } else {
           audio.volume = vol
         }
       }, 50)
     }
-  }, [])
+  }, [stopMusic, startMusic])
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
