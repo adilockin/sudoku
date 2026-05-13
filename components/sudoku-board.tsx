@@ -1,143 +1,162 @@
 "use client"
 
-import { useState } from "react"
 import { Undo2, Eraser, Lightbulb, PenLine } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
-
-// Sample puzzle data - 0 means empty cell
-const initialPuzzle = [
-  [5, 3, 0, 0, 7, 0, 0, 0, 0],
-  [6, 0, 0, 1, 9, 5, 0, 0, 0],
-  [0, 9, 8, 0, 0, 0, 0, 6, 0],
-  [8, 0, 0, 0, 6, 0, 0, 0, 3],
-  [4, 0, 0, 8, 0, 3, 0, 0, 1],
-  [7, 0, 0, 0, 2, 0, 0, 0, 6],
-  [0, 6, 0, 0, 0, 0, 2, 8, 0],
-  [0, 0, 0, 4, 1, 9, 0, 0, 5],
-  [0, 0, 0, 0, 8, 0, 0, 7, 9],
-]
-
-// Notes for demonstration
-const sampleNotes: Record<string, number[]> = {
-  "0-2": [1, 4],
-  "1-1": [2, 4, 7],
-  "2-0": [1, 2],
-}
+import { useGame } from "@/lib/game-context"
+import { useSettings } from "@/lib/settings-context"
+import { getNumberCounts } from "@/lib/sudoku-engine"
 
 export function SudokuBoard() {
-  const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>({ row: 2, col: 4 })
-  const [puzzle, setPuzzle] = useState(initialPuzzle)
-  const [notesMode, setNotesMode] = useState(false)
+  const {
+    state,
+    selectCell,
+    placeNumber,
+    erase,
+    undo,
+    hint,
+    toggleNotesMode,
+    isCellPrefilled,
+    isCellMistake,
+    isCellSelected,
+    isCellHighlighted,
+    isCellSameNumber,
+    getCellNotes,
+  } = useGame()
+  const { settings } = useSettings()
 
-  const handleCellClick = (row: number, col: number) => {
-    setSelectedCell({ row, col })
-  }
-
-  const handleNumberClick = (num: number) => {
-    if (selectedCell && initialPuzzle[selectedCell.row][selectedCell.col] === 0) {
-      const newPuzzle = puzzle.map((row, i) =>
-        row.map((cell, j) => (i === selectedCell.row && j === selectedCell.col ? num : cell))
-      )
-      setPuzzle(newPuzzle)
-    }
-  }
-
-  const isInSameBox = (row1: number, col1: number, row2: number, col2: number) => {
-    return Math.floor(row1 / 3) === Math.floor(row2 / 3) && Math.floor(col1 / 3) === Math.floor(col2 / 3)
-  }
+  const numberCounts = getNumberCounts(state.puzzle)
 
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-4 md:p-6">
-        {/* Sudoku Grid */}
-        <div className="aspect-square max-w-md mx-auto mb-6">
-          <div className="grid grid-cols-9 gap-0 border-2 border-foreground/80 rounded-lg overflow-hidden">
-            {puzzle.map((row, rowIndex) =>
-              row.map((cell, colIndex) => {
-                const isSelected = selectedCell?.row === rowIndex && selectedCell?.col === colIndex
-                const isHighlighted =
-                  selectedCell &&
-                  (selectedCell.row === rowIndex ||
-                    selectedCell.col === colIndex ||
-                    isInSameBox(selectedCell.row, selectedCell.col, rowIndex, colIndex))
-                const isPrefilled = initialPuzzle[rowIndex][colIndex] !== 0
-                const notes = sampleNotes[`${rowIndex}-${colIndex}`]
-                const showNotes = cell === 0 && notes && notes.length > 0
+    <div className="w-full flex flex-col items-center space-y-6 md:space-y-8 z-10 pointer-events-auto">
+      {/* Sudoku Grid - Minimal Slow Roads style */}
+      <div className="aspect-square w-full max-w-[400px] md:max-w-[480px] mx-auto">
+        <div className="grid grid-cols-9 h-full w-full border-2 border-white/20 bg-black/10 backdrop-blur-sm shadow-2xl">
+          {state.puzzle.map((row, rowIndex) =>
+            row.map((cell, colIndex) => {
+              const selected = isCellSelected(rowIndex, colIndex)
+              const highlighted = isCellHighlighted(rowIndex, colIndex)
+              const sameNum = isCellSameNumber(rowIndex, colIndex)
+              const prefilled = isCellPrefilled(rowIndex, colIndex)
+              const mistake = isCellMistake(rowIndex, colIndex)
+              const notes = getCellNotes(rowIndex, colIndex)
+              const hasValue = cell !== 0
 
-                return (
-                  <button
-                    key={`${rowIndex}-${colIndex}`}
-                    onClick={() => handleCellClick(rowIndex, colIndex)}
-                    className={cn(
-                      "aspect-square flex items-center justify-center text-lg md:text-xl font-semibold transition-all relative",
-                      "border-r border-b border-border/60",
-                      // Thicker borders for 3x3 boxes
-                      colIndex % 3 === 2 && colIndex !== 8 && "border-r-2 border-r-foreground/50",
-                      rowIndex % 3 === 2 && rowIndex !== 8 && "border-b-2 border-b-foreground/50",
-                      // Cell states
-                      isSelected && "bg-primary/30 ring-2 ring-primary ring-inset",
-                      !isSelected && isHighlighted && "bg-primary/10",
-                      !isSelected && !isHighlighted && "bg-card hover:bg-secondary/50",
-                      // Text colors
-                      isPrefilled ? "text-foreground" : "text-primary"
-                    )}
-                  >
-                    {showNotes ? (
-                      <div className="grid grid-cols-3 gap-0 text-[8px] md:text-[10px] text-muted-foreground p-0.5">
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
-                          <span key={n} className={cn("leading-none", !notes.includes(n) && "invisible")}>
-                            {n}
-                          </span>
-                        ))}
-                      </div>
-                    ) : cell !== 0 ? (
-                      cell
-                    ) : null}
-                  </button>
-                )
-              })
+              return (
+                <button
+                  key={`${rowIndex}-${colIndex}`}
+                  onClick={() => selectCell(rowIndex, colIndex)}
+                  className={cn(
+                    "aspect-square flex items-center justify-center text-lg sm:text-xl md:text-2xl font-serif relative transition-all duration-150 touch-manipulation",
+                    // Minimal borders
+                    colIndex % 3 === 2 && colIndex !== 8 && "border-r border-r-white/30",
+                    colIndex % 3 !== 2 && colIndex !== 8 && "border-r border-r-white/5",
+                    rowIndex % 3 === 2 && rowIndex !== 8 && "border-b border-b-white/30",
+                    rowIndex % 3 !== 2 && rowIndex !== 8 && "border-b border-b-white/5",
+                    // Selection & highlighting
+                    selected && "bg-white/20 ring-1 ring-inset ring-white/50 z-10",
+                    !selected && highlighted && "bg-white/5",
+                    !selected && sameNum && !highlighted && "bg-white/10",
+                    !selected && !highlighted && !sameNum && "hover:bg-white/5",
+                    // Text colors
+                    mistake && "text-destructive font-bold hud-text-glow",
+                    prefilled && !mistake && state.initialPuzzle[rowIndex][colIndex] !== 0 && "text-white/90 font-bold drop-shadow-md",
+                    prefilled && !mistake && state.initialPuzzle[rowIndex][colIndex] === 0 && "text-white/90 font-medium",
+                    !prefilled && !mistake && hasValue && "text-white/90 font-medium",
+                  )}
+                >
+                  {hasValue ? (
+                    <span className={cn(
+                      "transition-transform",
+                      selected && "scale-110"
+                    )}>
+                      {cell}
+                    </span>
+                  ) : notes.length > 0 ? (
+                    <div className="grid grid-cols-3 gap-0 w-full h-full p-0.5">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
+                        <span
+                          key={n}
+                          className={cn(
+                            "flex items-center justify-center text-[9px] sm:text-[10px] font-sans leading-none",
+                            notes.includes(n) ? "text-white/50" : "text-transparent"
+                          )}
+                        >
+                          {n}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                </button>
+              )
+            })
+          )}
+        </div>
+      </div>
+
+      {/* Number Keypad & Controls together in a minimal row */}
+      <div className="flex flex-col items-center gap-4 max-w-[480px] w-full">
+        {/* Numpad */}
+        <div className="flex justify-between w-full">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => {
+            const isFullyPlaced = settings.dimCompletedNumbers && numberCounts[num] >= 9
+            return (
+              <button
+                key={num}
+                className={cn(
+                  "w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center text-base sm:text-lg md:text-xl font-serif transition-all relative border border-transparent rounded-sm touch-manipulation",
+                  isFullyPlaced && "opacity-20 cursor-not-allowed",
+                  !isFullyPlaced && "text-white/80 hover:text-white hover:border-white/20 hover:bg-white/5",
+                  state.notesMode && !isFullyPlaced && "text-white/50 text-xs sm:text-sm"
+                )}
+                onClick={() => !isFullyPlaced && placeNumber(num)}
+                disabled={isFullyPlaced}
+              >
+                {num}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Tools */}
+        <div className="flex items-center justify-around w-full text-white/50 font-sans text-[10px] sm:text-xs tracking-[0.1em] sm:tracking-[0.2em] uppercase mt-4">
+          <button 
+            onClick={undo}
+            disabled={state.history.length === 0}
+            className="flex flex-col items-center gap-1 hover:text-white disabled:opacity-30 transition-colors group touch-manipulation min-w-[60px]"
+          >
+            <Undo2 className="h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform" />
+            <span>{settings.language === "ru" ? "Назад" : "Undo"}</span>
+          </button>
+          
+          <button 
+            onClick={erase}
+            className="flex flex-col items-center gap-1 hover:text-white transition-colors group touch-manipulation min-w-[60px]"
+          >
+            <Eraser className="h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform" />
+            <span>{settings.language === "ru" ? "Стереть" : "Erase"}</span>
+          </button>
+
+          <button 
+            onClick={toggleNotesMode}
+            className={cn(
+              "flex flex-col items-center gap-1 transition-colors group touch-manipulation min-w-[60px]",
+              state.notesMode ? "text-white" : "hover:text-white"
             )}
-          </div>
-        </div>
+          >
+            <PenLine className="h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform" />
+            <span>{settings.language === "ru" ? "Заметки" : "Notes"}</span>
+          </button>
 
-        {/* Number Keypad */}
-        <div className="grid grid-cols-9 gap-2 max-w-md mx-auto mb-4">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-            <Button
-              key={num}
-              variant="secondary"
-              className="aspect-square text-lg font-semibold hover:bg-primary hover:text-primary-foreground transition-colors"
-              onClick={() => handleNumberClick(num)}
-            >
-              {num}
-            </Button>
-          ))}
+          <button 
+            onClick={hint}
+            disabled={state.hintsUsed >= state.maxHints}
+            className="flex flex-col items-center gap-1 hover:text-white disabled:opacity-30 transition-colors group touch-manipulation min-w-[60px]"
+          >
+            <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform" />
+            <span>{settings.language === "ru" ? "Подсказка" : "Hint"} ({state.maxHints - state.hintsUsed})</span>
+          </button>
         </div>
-
-        {/* Control Panel */}
-        <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
-          <Button variant="outline" size="sm" className="gap-2">
-            <Undo2 className="h-4 w-4" />
-            <span className="hidden sm:inline">Undo</span>
-          </Button>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Eraser className="h-4 w-4" />
-            <span className="hidden sm:inline">Erase</span>
-          </Button>
-          <div className="flex items-center gap-2 rounded-lg border bg-secondary/50 px-3 py-2">
-            <PenLine className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm hidden sm:inline">Notes</span>
-            <Switch checked={notesMode} onCheckedChange={setNotesMode} />
-          </div>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Lightbulb className="h-4 w-4" />
-            <span className="hidden sm:inline">Hint</span>
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

@@ -4,79 +4,90 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.98 0 0);
-  --foreground: oklch(0.15 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0 0);
-  --primary: oklch(0.55 0.2 150);
+  --background: oklch(0.97 0.01 220);
+  --foreground: oklch(0.15 0.02 220);
+  --card: oklch(1 0 0 / 0.1);
+  --card-foreground: oklch(0.15 0.02 220);
+  --popover: oklch(1 0 0 / 0.1);
+  --popover-foreground: oklch(0.15 0.02 220);
+  --primary: oklch(0.55 0.18 250);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.96 0 0);
-  --secondary-foreground: oklch(0.2 0 0);
-  --muted: oklch(0.95 0 0);
-  --muted-foreground: oklch(0.5 0 0);
-  --accent: oklch(0.65 0.18 150);
+  --secondary: oklch(0.94 0.01 220 / 0.2);
+  --secondary-foreground: oklch(0.2 0.02 220);
+  --muted: oklch(0.94 0.01 220 / 0.1);
+  --muted-foreground: oklch(0.45 0.02 220);
+  --accent: oklch(0.6 0.16 280);
   --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.55 0.22 25);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.9 0 0);
-  --input: oklch(0.9 0 0);
-  --ring: oklch(0.55 0.2 150);
-  --chart-1: oklch(0.55 0.2 150);
+  --border: oklch(0.88 0.01 220 / 0.1);
+  --input: oklch(0.92 0.01 220 / 0.1);
+  --ring: oklch(0.55 0.18 250);
+  --chart-1: oklch(0.55 0.18 250);
   --chart-2: oklch(0.6 0.15 200);
   --chart-3: oklch(0.5 0.1 250);
   --chart-4: oklch(0.7 0.15 80);
   --chart-5: oklch(0.65 0.18 30);
-  --radius: 0.75rem;
-  --sidebar: oklch(0.98 0 0);
-  --sidebar-foreground: oklch(0.15 0 0);
-  --sidebar-primary: oklch(0.55 0.2 150);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.97 0.01 220);
+  --sidebar-foreground: oklch(0.15 0.02 220);
+  --sidebar-primary: oklch(0.55 0.18 250);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.95 0.02 150);
-  --sidebar-accent-foreground: oklch(0.2 0 0);
-  --sidebar-border: oklch(0.9 0 0);
-  --sidebar-ring: oklch(0.55 0.2 150);
+  --sidebar-accent: oklch(0.94 0.01 220 / 0.1);
+  --sidebar-accent-foreground: oklch(0.2 0.02 220);
+  --sidebar-border: oklch(0.88 0.01 220 / 0.1);
+  --sidebar-ring: oklch(0.55 0.18 250);
+
+  --glass-bg: transparent;
+  --glass-border: transparent;
+  --glass-shadow: none;
+  --glass-blur: 0px;
 }
 
 .dark {
-  --background: oklch(0.12 0.01 260);
-  --foreground: oklch(0.95 0 0);
-  --card: oklch(0.16 0.01 260);
-  --card-foreground: oklch(0.95 0 0);
-  --popover: oklch(0.16 0.01 260);
-  --popover-foreground: oklch(0.95 0 0);
-  --primary: oklch(0.65 0.2 150);
-  --primary-foreground: oklch(0.1 0 0);
-  --secondary: oklch(0.22 0.01 260);
-  --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.22 0.01 260);
-  --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.55 0.15 150);
-  --accent-foreground: oklch(0.95 0 0);
-  --destructive: oklch(0.5 0.2 25);
-  --destructive-foreground: oklch(0.95 0 0);
-  --border: oklch(0.25 0.01 260);
-  --input: oklch(0.22 0.01 260);
-  --ring: oklch(0.65 0.2 150);
-  --chart-1: oklch(0.65 0.2 150);
+  --background: oklch(0.35 0.08 210); /* Deep cyan/teal for Slow Roads vibe */
+  --foreground: oklch(0.98 0 0); /* Pure white text */
+  --card: transparent;
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.3 0.08 210 / 0.9);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.98 0 0); /* White primary for HUD items */
+  --primary-foreground: oklch(0.2 0.08 210);
+  --secondary: oklch(1 0 0 / 0.1);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(1 0 0 / 0.1);
+  --muted-foreground: oklch(1 0 0 / 0.6);
+  --accent: oklch(1 0 0 / 0.2);
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.6 0.22 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(1 0 0 / 0.1);
+  --input: oklch(1 0 0 / 0.1);
+  --ring: oklch(1 0 0 / 0.3);
+  --chart-1: oklch(0.7 0.18 260);
   --chart-2: oklch(0.55 0.15 200);
   --chart-3: oklch(0.5 0.12 250);
   --chart-4: oklch(0.7 0.15 80);
   --chart-5: oklch(0.6 0.18 30);
-  --sidebar: oklch(0.14 0.01 260);
-  --sidebar-foreground: oklch(0.95 0 0);
-  --sidebar-primary: oklch(0.65 0.2 150);
-  --sidebar-primary-foreground: oklch(0.1 0 0);
-  --sidebar-accent: oklch(0.22 0.02 260);
-  --sidebar-accent-foreground: oklch(0.95 0 0);
-  --sidebar-border: oklch(0.25 0.01 260);
-  --sidebar-ring: oklch(0.65 0.2 150);
+  --sidebar: oklch(0.3 0.08 210);
+  --sidebar-foreground: oklch(0.98 0 0);
+  --sidebar-primary: oklch(0.98 0 0);
+  --sidebar-primary-foreground: oklch(0.2 0.08 210);
+  --sidebar-accent: oklch(1 0 0 / 0.1);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(1 0 0 / 0.1);
+  --sidebar-ring: oklch(1 0 0 / 0.3);
+
+  --glass-bg: transparent;
+  --glass-border: transparent;
+  --glass-shadow: none;
+  --glass-blur: 0px;
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --font-sans: var(--font-geist-sans), 'Geist', 'Geist Fallback';
+  --font-mono: var(--font-geist-mono), 'Geist Mono', 'Geist Mono Fallback';
+  --font-serif: var(--font-playfair), serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -122,4 +133,131 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ===== ADOKU / SLOW ROADS THEME ===== */
+
+body {
+  background-color: var(--background);
+}
+
+.dark body {
+  /* Minimal solid gradient background */
+  background: radial-gradient(circle at 50% 100%, oklch(0.45 0.08 210) 0%, oklch(0.25 0.06 210) 100%);
+  background-attachment: fixed;
+}
+
+/* Removing glass styling completely to match Slow Roads HUD minimalism */
+.glass {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.glass-hover {
+  transition: all 0.2s ease;
+}
+.glass-hover:hover {
+  opacity: 0.8;
+}
+
+.glass-nav {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* The Sudoku grid cells should be minimal and sharp */
+.glass-cell {
+  background: transparent;
+  transition: all 0.15s ease;
+}
+.glass-cell:hover {
+  background: oklch(1 0 0 / 0.05);
+}
+.dark .glass-cell:hover {
+  background: oklch(1 0 0 / 0.1);
+}
+
+.glass-overlay {
+  background: oklch(0 0 0 / 0.8);
+  backdrop-filter: blur(8px);
+}
+
+.glass-modal {
+  background: oklch(0.25 0.06 210);
+  border: 1px solid oklch(1 0 0 / 0.1);
+  box-shadow: 0 24px 80px oklch(0 0 0 / 0.5);
+}
+
+.glass-popup {
+  background: oklch(0.25 0.06 210);
+  border: 1px solid oklch(1 0 0 / 0.1);
+}
+
+.glass-grid {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* Score popup animation */
+@keyframes popup-slide {
+  0% { opacity: 0; transform: translateY(10px) scale(0.9); }
+  20% { opacity: 1; transform: translateY(0) scale(1); }
+  80% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-10px) scale(0.95); }
+}
+
+.score-popup-anim {
+  animation: popup-slide 1.5s ease-out forwards;
+}
+
+/* Glow effects for text in HUD (optional) */
+.hud-text-glow {
+  text-shadow: 0 0 10px oklch(1 0 0 / 0.5);
+}
+/* Fireflies / Glowing particles animation */
+@keyframes firefly-float {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+  25% { transform: translate(15px, -20px) scale(1.2); opacity: 0.6; }
+  50% { transform: translate(-10px, 10px) scale(0.8); opacity: 0.4; }
+  75% { transform: translate(20px, 15px) scale(1.1); opacity: 0.7; }
+}
+
+@keyframes firefly-twinkle {
+  0%, 100% { opacity: 0.3; filter: blur(1px); }
+  50% { opacity: 0.8; filter: blur(2px); transform: scale(1.2); }
+}
+
+.animate-firefly {
+  animation: firefly-float 15s ease-in-out infinite alternate;
+}
+
+.animate-firefly-delayed {
+  animation: firefly-float 20s ease-in-out infinite alternate-reverse;
+  animation-delay: -5s;
+}
+
+.animate-firefly-fast {
+  animation: firefly-float 10s ease-in-out infinite alternate;
+  animation-delay: -2s;
+}
+
+.animate-twinkle {
+  animation: firefly-twinkle 4s ease-in-out infinite;
+}
+
+/* Hide Next.js Dev Indicators/Portals in Dev mode */
+nextjs-portal,
+#next-portal,
+#__next-prerender-indicator,
+#__next-build-watcher,
+[data-nextjs-toast-container],
+[data-nextjs-dialog-overlay] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
