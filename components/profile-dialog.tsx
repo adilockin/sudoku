@@ -57,12 +57,19 @@ export function ProfileDialog({ children }: { children?: React.ReactNode }) {
   const [isEditing, setIsEditing] = useState(!profile.username && !user)
   const [tempName, setTempName] = useState(profile.username)
   
-  // Supabase Auth states
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [nickname, setNickname] = useState("")
   const [authLoading, setAuthLoading] = useState(false)
   const [authError, setAuthError] = useState("")
   const [isLoginMode, setIsLoginMode] = useState(true)
+  const [isSettingsMode, setIsSettingsMode] = useState(false)
+  
+  // Update Account states
+  const [newNickname, setNewNickname] = useState(profile.username)
+  const [newEmail, setNewEmail] = useState(user?.email || "")
+  const [newPassword, setNewPassword] = useState("")
+  const [updateMsg, setUpdateMsg] = useState("")
   const supabase = createClient()
 
   const handleSaveGuest = () => {
@@ -101,18 +108,68 @@ export function ProfileDialog({ children }: { children?: React.ReactNode }) {
         if (result.error) throw result.error
         setIsEditing(false)
       } else {
-        result = await supabase.auth.signUp({ email, password })
+        result = await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: {
+            data: {
+              username: nickname || email.split('@')[0]
+            }
+          }
+        })
         if (result.error) throw result.error
         
         // Show success message for email verification
         if (result.data?.user && !result.data.session) {
-          setAuthSuccessMsg("Account created! Please check your email for the verification link.")
+          setAuthSuccessMsg(settings.language === "ru" 
+            ? "Аккаунт создан! Пожалуйста, проверьте почту для подтверждения." 
+            : "Account created! Please check your email for the verification link.")
         } else {
           setIsEditing(false)
         }
       }
     } catch (err: any) {
       setAuthError(err.message || "Authentication failed")
+    } finally {
+      setAuthLoading(false)
+    }
+  }
+
+  const handleUpdateAccount = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setAuthLoading(true)
+    setAuthError("")
+    setUpdateMsg("")
+
+    try {
+      const updates: any = {}
+      if (newNickname !== profile.username) {
+        updates.data = { username: newNickname }
+      }
+      if (newEmail !== user?.email) {
+        updates.email = newEmail
+      }
+      if (newPassword) {
+        updates.password = newPassword
+      }
+
+      if (Object.keys(updates).length === 0) {
+        setUpdateMsg(settings.language === "ru" ? "Нет изменений" : "No changes detected")
+        setAuthLoading(false)
+        return
+      }
+
+      const { error } = await supabase.auth.updateUser(updates)
+      if (error) throw error
+
+      if (newNickname !== profile.username) {
+        updateUsername(newNickname)
+      }
+
+      setUpdateMsg(settings.language === "ru" ? "Профиль обновлен!" : "Profile updated!")
+      setNewPassword("")
+    } catch (err: any) {
+      setAuthError(err.message || "Update failed")
     } finally {
       setAuthLoading(false)
     }
@@ -140,11 +197,16 @@ export function ProfileDialog({ children }: { children?: React.ReactNode }) {
     setOpen(newOpen)
     if (newOpen) {
       setIsEditing(!profile.username && !user)
+      setIsSettingsMode(false)
       setTempName(profile.username)
+      setNickname("")
       setEmail("")
       setPassword("")
       setConfirmPassword("")
       setAuthError("")
+      setUpdateMsg("")
+      setNewNickname(profile.username)
+      setNewEmail(user?.email || "")
     }
   }
 
@@ -199,14 +261,24 @@ export function ProfileDialog({ children }: { children?: React.ReactNode }) {
                   required
                 />
                 {!isLoginMode && (
-                  <Input
-                    type="password"
-                    placeholder={settings.language === "ru" ? "Подтвердите Пароль" : "Confirm Password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-center h-10 rounded-none font-sans"
-                    required
-                  />
+                  <>
+                    <Input
+                      type="text"
+                      placeholder={settings.language === "ru" ? "Никнейм" : "Nickname"}
+                      value={nickname}
+                      onChange={(e) => setNickname(e.target.value)}
+                      className="bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-center h-10 rounded-none font-sans"
+                      required
+                    />
+                    <Input
+                      type="password"
+                      placeholder={settings.language === "ru" ? "Подтвердите Пароль" : "Confirm Password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-center h-10 rounded-none font-sans"
+                      required
+                    />
+                  </>
                 )}
                 <Button 
                   type="submit"
@@ -329,15 +401,88 @@ export function ProfileDialog({ children }: { children?: React.ReactNode }) {
                 </div>
               )}
 
-              <div className="pt-4 border-t border-white/10 flex gap-4">
+              <div className="pt-4 border-t border-white/10 flex flex-col gap-4">
                 {user && (
-                  <Button variant="outline" onClick={handleLogout} className="flex-1 rounded-none border border-white/20 text-white/70 hover:bg-white/10 hover:text-white text-xs uppercase tracking-[0.2em] font-sans font-bold h-12">
-                    {settings.language === "ru" ? "Выйти" : "Sign Out"}
+                  <>
+                    {isSettingsMode ? (
+                      <form onSubmit={handleUpdateAccount} className="space-y-4 bg-white/5 p-4 border border-white/10">
+                        <h3 className="text-[10px] font-sans font-bold text-white/90 uppercase tracking-[0.2em] mb-2">
+                          {settings.language === "ru" ? "Настройки аккаунта" : "Account Settings"}
+                        </h3>
+                        {authError && <p className="text-xs text-destructive text-center">{authError}</p>}
+                        {updateMsg && <p className="text-xs text-green-400 text-center">{updateMsg}</p>}
+                        
+                        <div className="space-y-2">
+                          <p className="text-[8px] text-white/50 uppercase tracking-widest pl-1">{settings.language === "ru" ? "Никнейм" : "Nickname"}</p>
+                          <Input
+                            value={newNickname}
+                            onChange={(e) => setNewNickname(e.target.value)}
+                            className="bg-white/5 border border-white/10 text-white h-9 rounded-none font-sans text-sm"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className="text-[8px] text-white/50 uppercase tracking-widest pl-1">{settings.language === "ru" ? "Эл. почта" : "Email"}</p>
+                          <Input
+                            type="email"
+                            value={newEmail}
+                            onChange={(e) => setNewEmail(e.target.value)}
+                            className="bg-white/5 border border-white/10 text-white h-9 rounded-none font-sans text-sm"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className="text-[8px] text-white/50 uppercase tracking-widest pl-1">{settings.language === "ru" ? "Новый пароль (оставьте пустым)" : "New Password (leave blank to keep)"}</p>
+                          <Input
+                            type="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className="bg-white/5 border border-white/10 text-white h-9 rounded-none font-sans text-sm"
+                          />
+                        </div>
+
+                        <div className="flex gap-2 pt-2">
+                          <Button 
+                            type="button" 
+                            variant="ghost" 
+                            onClick={() => setIsSettingsMode(false)}
+                            className="flex-1 rounded-none border border-white/10 text-[10px] uppercase font-bold"
+                          >
+                            {settings.language === "ru" ? "Назад" : "Back"}
+                          </Button>
+                          <Button 
+                            type="submit" 
+                            disabled={authLoading}
+                            className="flex-1 rounded-none bg-white text-black hover:bg-white/90 text-[10px] uppercase font-bold"
+                          >
+                            {authLoading ? "..." : (settings.language === "ru" ? "Сохранить" : "Save")}
+                          </Button>
+                        </div>
+                      </form>
+                    ) : (
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setIsSettingsMode(true)}
+                        className="w-full rounded-none border border-white/20 text-white/70 hover:bg-white/10 hover:text-white text-xs uppercase tracking-[0.2em] font-sans font-bold h-10"
+                      >
+                        {settings.language === "ru" ? "Настройки аккаунта" : "Account Settings"}
+                      </Button>
+                    )}
+                    <Button variant="outline" onClick={handleLogout} className="w-full rounded-none border border-white/20 text-white/70 hover:bg-white/10 hover:text-white text-xs uppercase tracking-[0.2em] font-sans font-bold h-10">
+                      {settings.language === "ru" ? "Выйти" : "Sign Out"}
+                    </Button>
+                  </>
+                )}
+                {!user && (
+                   <Button variant="ghost" onClick={handleReset} className="w-full rounded-none bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:text-white transition-colors text-xs uppercase tracking-[0.2em] font-sans font-bold h-12">
+                    {settings.language === "ru" ? "Сбросить локальную статистику" : "Reset Local Stats"}
                   </Button>
                 )}
-                <Button variant="ghost" onClick={handleReset} className="flex-1 rounded-none bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:text-white transition-colors text-xs uppercase tracking-[0.2em] font-sans font-bold h-12">
-                  {settings.language === "ru" ? "Сбросить статистику" : "Reset Stats"}
-                </Button>
+                {user && !isSettingsMode && (
+                   <Button variant="ghost" onClick={handleReset} className="w-full rounded-none bg-white/5 text-white/30 hover:text-white/60 transition-colors text-[9px] uppercase tracking-[0.2em] font-sans font-bold h-8">
+                    {settings.language === "ru" ? "Сбросить статистику" : "Reset Stats"}
+                  </Button>
+                )}
               </div>
             </>
           )}
