@@ -12,6 +12,17 @@ export interface DifficultyStats {
   bestScore: number | null;
 }
 
+export interface GameRecord {
+  id: string;
+  date: string;
+  difficulty: Difficulty;
+  time: number;
+  score: number;
+  mistakes: number;
+  hintsUsed: number;
+  completed: boolean;
+}
+
 export interface UserProfile {
   username: string;
   stats: {
@@ -21,6 +32,7 @@ export interface UserProfile {
     totalMistakes: number;
     difficulties: Record<Difficulty, DifficultyStats>;
   };
+  gameHistory: GameRecord[];
 }
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -37,6 +49,7 @@ const DEFAULT_PROFILE: UserProfile = {
       expert: { played: 0, won: 0, bestTime: null, bestScore: null },
     },
   },
+  gameHistory: [],
 };
 
 interface ProfileContextValue {
@@ -44,7 +57,7 @@ interface ProfileContextValue {
   user: User | null;
   updateUsername: (name: string) => void;
   recordGameStart: (difficulty: Difficulty) => void;
-  recordGameWin: (difficulty: Difficulty, time: number, score: number) => void;
+  recordGameWin: (difficulty: Difficulty, time: number, score: number, mistakes?: number, hintsUsed?: number) => void;
   recordMistake: () => void;
   recordTimePlayed: (seconds: number) => void;
   resetProfile: () => void;
@@ -108,7 +121,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const recordGameWin = (difficulty: Difficulty, time: number, score: number) => {
+  const recordGameWin = (difficulty: Difficulty, time: number, score: number, mistakes: number = 0, hintsUsed: number = 0) => {
     setProfile((prev) => {
       const p = { ...prev };
       p.stats.totalGamesWon++;
@@ -122,6 +135,20 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       if (diffStats.bestScore === null || score > diffStats.bestScore) {
         diffStats.bestScore = score;
       }
+      
+      // Save game history
+      const record: GameRecord = {
+        id: Math.random().toString(36).substring(2, 15),
+        date: new Date().toISOString(),
+        difficulty,
+        time,
+        score,
+        mistakes,
+        hintsUsed,
+        completed: true,
+      };
+      
+      p.gameHistory = [record, ...(p.gameHistory || [])].slice(0, 50); // Keep last 50 games
       
       return p;
     });

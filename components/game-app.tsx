@@ -41,7 +41,11 @@ function SlowRoadsHUD() {
 
   return (
     <>
-      <div className="absolute bottom-0 w-full p-4 pb-4 sm:pb-6 md:p-12 flex justify-between items-end pointer-events-none z-20 font-sans tracking-widest text-white/90">
+      {/* Full screen HUD container */}
+      <div className="fixed inset-0 pointer-events-none z-20 font-sans tracking-widest text-white/90">
+        
+        {/* Bottom Bar: Score, Difficulty, Time */}
+        <div className="absolute bottom-0 w-full p-4 pb-4 sm:pb-6 md:p-12 flex justify-between items-end">
         {/* Left side: Score & Mistakes */}
         <div className="flex flex-col gap-3 sm:gap-6">
           <div className="flex flex-col">
@@ -86,6 +90,8 @@ function SlowRoadsHUD() {
           <div className="text-[7px] sm:text-[10px] md:text-xs font-bold text-white/50 uppercase mt-0 sm:mt-1">
             {settings.language === "ru" ? "ВРЕМЯ" : "TIME"}
           </div>
+        </div>
+
         </div>
 
         {/* Right Top controls - clearly at the top for mobile */}

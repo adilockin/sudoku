@@ -16,6 +16,7 @@ import { useProfile, type DifficultyStats } from "@/lib/profile-context"
 import { useSettings } from "@/lib/settings-context"
 import type { Difficulty } from "@/lib/sudoku-engine"
 import { createClient } from "@/lib/supabase/client"
+import { cn } from "@/lib/utils"
 
 function formatTime(seconds: number | null): string {
   if (seconds === null) return "--:--"
@@ -280,7 +281,6 @@ export function ProfileDialog({ children }: { children?: React.ReactNode }) {
                 <StatCard title="Mistakes" value={profile.stats.totalMistakes} icon={AlertCircle} subtitle="Total errors made" />
               </div>
 
-              {/* Detailed Stats */}
               <div className="bg-transparent border-t border-white/10 rounded-none py-4">
                 <h3 className="text-[10px] font-sans font-bold text-white/90 bg-black/40 border-y border-white/10 uppercase tracking-[0.2em] px-3 py-1.5 mb-4 shadow-sm">
                   {settings.language === "ru" ? "СТАТИСТИКА ПО УРОВНЯМ" : "PERFORMANCE BY MODE"}
@@ -295,6 +295,39 @@ export function ProfileDialog({ children }: { children?: React.ReactNode }) {
                   <DifficultyRow key={diff} diff={diff} stats={profile.stats.difficulties[diff]} />
                 ))}
               </div>
+
+              {/* Game History / Analysis */}
+              {profile.gameHistory && profile.gameHistory.length > 0 && (
+                <div className="bg-transparent border-t border-white/10 rounded-none py-4">
+                  <h3 className="text-[10px] font-sans font-bold text-white/90 bg-black/40 border-y border-white/10 uppercase tracking-[0.2em] px-3 py-1.5 mb-4 shadow-sm">
+                    {settings.language === "ru" ? "ИСТОРИЯ ИГР (АНАЛИЗ)" : "GAME HISTORY & ANALYSIS"}
+                  </h3>
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                    {profile.gameHistory.map((game) => (
+                      <div key={game.id} className="bg-white/5 border border-white/10 p-3 flex justify-between items-center">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-white uppercase tracking-wider">{game.difficulty}</span>
+                          <span className="text-[10px] text-white/50">{new Date(game.date).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex gap-4 text-center">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-mono text-white/90">{formatTime(game.time)}</span>
+                            <span className="text-[8px] text-white/50 uppercase tracking-widest">Time</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-xs font-mono text-white/90">{game.score}</span>
+                            <span className="text-[8px] text-white/50 uppercase tracking-widest">Score</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className={cn("text-xs font-mono", game.mistakes > 0 ? "text-red-400" : "text-white/90")}>{game.mistakes}</span>
+                            <span className="text-[8px] text-white/50 uppercase tracking-widest">Errors</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="pt-4 border-t border-white/10 flex gap-4">
                 {user && (

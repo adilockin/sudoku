@@ -533,10 +533,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const prevIsCompleteRef = useRef(false);
   useEffect(() => {
     if (state.isComplete && !prevIsCompleteRef.current) {
-      recordGameWin(state.difficulty, state.timer, state.score.totalScore);
+      recordGameWin(state.difficulty, state.timer, state.score.totalScore, state.mistakes, state.hintsUsed);
     }
     prevIsCompleteRef.current = state.isComplete;
-  }, [state.isComplete, state.difficulty, state.timer, state.score.totalScore, recordGameWin]);
+  }, [state.isComplete, state.difficulty, state.timer, state.score.totalScore, state.mistakes, state.hintsUsed, recordGameWin]);
 
   // Track mistakes
   const prevMistakesRef = useRef(state.mistakes);
